@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Отмазатор 3000</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 2rem;
+      color: #2c3e50;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      color: #2c3e50;
+      transition: all 0.3s ease;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      animation: fadeIn 0.8s ease-in-out both;
+    }
+
+    .category-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+
+    .category-buttons button {
+      font-size: 1rem;
+      padding: 0.6rem 1rem;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      color: #2c3e50;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 140px;
+    }
+
+    .category-buttons button.active,
+    .category-buttons button:hover {
+      background-color: #6366f1;
+      color: #fff;
+      border-color: #6366f1;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    .generate-btn {
+      font-size: 1rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      background-color: #6366f1;
+      color: #fff;
+      border: none;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+    }
+
+    .generate-btn:hover {
+      background-color: #4f46e5;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+    }
+
+    .output {
+      max-width: 600px;
+      text-align: center;
+      font-size: 1.25rem;
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      color: #374151;
+      line-height: 1.6;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .output.visible {
+      visibility: visible;
+      opacity: 1;
+      animation: slideFade 0.6s ease-out;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .output {
+        font-size: 1rem;
+        padding: 1.5rem;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideFade {
+      0% {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>🤷‍♂️ Отмазатор 3000</h1>
+  <div class="controls">
+    <div class="category-buttons" id="categoryButtons">
+      <button data-category="universal" class="active">🎯 Универсальная</button>
+      <button data-category="message">📱 Почему не ответил</button>
+      <button data-category="late">⏰ Почему опоздал</button>
+      <button data-category="forgot">🧠 Почему забыл</button>
+      <button data-category="deadline">📅 Почему просрочил</button>
+    </div>
+    <button class="generate-btn" onclick="generateExcuse()">Сгенерировать отмазку</button>
+  </div>
+  <div class="output" id="output"></div>
+
+  <script>
+    let selectedCategory = 'universal';
+
+    document.querySelectorAll('#categoryButtons button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#categoryButtons button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedCategory = btn.getAttribute('data-category');
+      });
+    });
+
+    const excuses = {
+      universal: {
+        starts: ["Извини, но", "Слушай, всё было под контролем, но", "Ты не поверишь, но"],
+        reasons: ["кошка залила ноутбук", "инопланетяне украли Wi-Fi", "у меня случился мини-апокалипсис дома"],
+        details: ["всё случилось буквально за минуту до", "я пытался всё исправить, но стало только хуже", "и в этот момент отключили свет"],
+        endings: ["поэтому так вышло.", "не суди строго.", "в следующий раз точно получится!"]
+      },
+      message: {
+        starts: ["Честно говоря,", "Клянусь,", "Ты не представляешь, но"],
+        reasons: ["телефон разрядился", "увлёкся делами", "просто забыл, что начал тебе писать"],
+        details: ["и потом всё завертелось", "а потом появилась работа", "и внезапно наступила ночь"],
+        endings: ["не обижайся, пожалуйста.", "обещаю больше так не делать.", "вот сейчас пишу!"]
+      },
+      late: {
+        starts: ["Я бежал изо всех сил, но", "Всё было хорошо, пока", "Я выехал вовремя, но"] ,
+        reasons: ["застрял в лифте", "впервые в жизни была пробка на тротуаре", "погнался за автобусом не в ту сторону"],
+        details: ["а потом начался ливень", "и ботинок застрял в решётке", "пришлось спасать бабушку с котом"],
+        endings: ["поэтому немного опоздал.", "надеюсь, ты не сильно злишься.", "прости за задержку!"]
+      },
+      forgot: {
+        starts: ["У меня был план, но", "Я точно помнил, пока", "Собирался сделать, но"] ,
+        reasons: ["увидел мем и выпал из реальности", "меня отвлек кот", "случайно открыл TikTok"],
+        details: ["а потом память как отрезало", "и всё вылетело из головы", "и я подумал, что уже сделал"],
+        endings: ["это не со зла.", "обещаю исправиться.", "сейчас сделаю!"]
+      },
+      deadline: {
+        starts: ["Всё шло по плану, пока", "Серьёзно, я уже почти закончил, но", "Сел делать, но"] ,
+        reasons: ["комп завис намертво", "пришлось переделывать с нуля", "неожиданно заболел"],
+        details: ["я пытался всё восстановить", "время ушло на отладку", "всё пошло не так, как планировалось"],
+        endings: ["зато будет идеально!", "немного опоздал, но не напрасно.", "готов почти!"]
+      }
+    };
+
+    function getRandom(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function generateExcuse() {
+      const parts = excuses[selectedCategory] ?? excuses.universal;
+      if (!parts || !parts.starts || !parts.reasons || !parts.details || !parts.endings) {
+        console.error("Некорректные данные отмазки для категории:", selectedCategory);
+        return;
+      }
+      const excuse = `${getRandom(parts.starts)} ${getRandom(parts.reasons)}, ${getRandom(parts.details)}, ${getRandom(parts.endings)}`;
+      const outputEl = document.getElementById('output');
+      outputEl.textContent = excuse;
+      outputEl.classList.add('visible');
+    }
+  </script>
+</body>
+</html>
